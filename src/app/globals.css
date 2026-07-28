@@ -7,10 +7,7 @@
 }
 
 :root {
-  --bg: #dce9fb;
-  --bg-orb-1: #9dc6ff;
-  --bg-orb-2: #2f7dfb;
-  --bg-orb-3: #1348b8;
+  --bg: #cfe0ff;
   --text: #0c1a2e;
   --text-muted: #4f6382;
   --glass-bg: rgba(255, 255, 255, 0.55);
@@ -27,10 +24,7 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #020a1c;
-  --bg-orb-1: #1a56d6;
-  --bg-orb-2: #0a84ff;
-  --bg-orb-3: #072a63;
+  --bg: #0a2258;
   --text: #eef4ff;
   --text-muted: #8fa2c4;
   --glass-bg: rgba(15, 26, 48, 0.55);
@@ -48,10 +42,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #020a1c;
-    --bg-orb-1: #1a56d6;
-    --bg-orb-2: #0a84ff;
-    --bg-orb-3: #072a63;
+    --bg: #0a2258;
     --text: #eef4ff;
     --text-muted: #8fa2c4;
     --glass-bg: rgba(15, 26, 48, 0.55);
@@ -76,73 +67,6 @@ body {
   background: var(--bg);
   color: var(--text);
   transition: background-color 0.35s ease, color 0.35s ease;
-}
-
-/* Ambient background orbs */
-.bg-orbs {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.bg-orbs::before,
-.bg-orbs::after,
-.bg-orbs span {
-  content: "";
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(90px);
-  opacity: 0.55;
-}
-
-.bg-orbs::before {
-  width: 42vw;
-  height: 42vw;
-  top: -10vw;
-  left: -8vw;
-  background: var(--bg-orb-1);
-  animation: drift-a 26s ease-in-out infinite;
-}
-
-.bg-orbs::after {
-  width: 38vw;
-  height: 38vw;
-  bottom: -12vw;
-  right: -6vw;
-  background: var(--bg-orb-2);
-  animation: drift-b 30s ease-in-out infinite;
-}
-
-.bg-orbs span {
-  width: 30vw;
-  height: 30vw;
-  top: 30vh;
-  right: 20vw;
-  background: var(--bg-orb-3);
-  animation: drift-c 22s ease-in-out infinite;
-}
-
-@keyframes drift-a {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(4vw, 5vw) scale(1.08); }
-}
-@keyframes drift-b {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-5vw, -4vw) scale(1.1); }
-}
-@keyframes drift-c {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-3vw, 4vw) scale(0.94); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bg-orbs::before,
-  .bg-orbs::after,
-  .bg-orbs span {
-    animation: none;
-  }
 }
 
 /* Glass surfaces */
