@@ -7,11 +7,11 @@ export default function LiquidRatingMeter({
 }) {
   const pct = Math.max(0, Math.min(100, (score / 5) * 100));
   const height = size === "sm" ? "h-2" : "h-3.5";
-  const width = size === "sm" ? "w-16" : "w-full";
+  const width = size === "sm" ? "w-16 shrink-0" : "min-w-0 flex-1";
 
   return (
     <div
-      className={`relative ${width} ${height} shrink-0 overflow-hidden rounded-full`}
+      className={`relative ${width} ${height} overflow-hidden rounded-full`}
       style={{
         background: "var(--glass-bg-strong)",
         border: "1px solid var(--glass-border)",
