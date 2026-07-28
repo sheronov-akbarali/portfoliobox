@@ -45,14 +45,14 @@ export default function ProjectCard({ project }: { project: ProjectListItem }) {
           </div>
         )}
 
-        <div className="mt-auto flex items-center justify-between pt-3 text-sm text-slate-500">
-          <span>{project.authorName}</span>
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1">
+        <div className="mt-auto flex items-center justify-between gap-2 pt-3 text-sm text-slate-500">
+          <span className="min-w-0 truncate">{project.authorName}</span>
+          <div className="flex shrink-0 items-center gap-3">
+            <span className="flex items-center gap-1 whitespace-nowrap">
               ⭐ {project.avgRating.toFixed(1)}
               <span className="text-slate-400">({project.ratingCount})</span>
             </span>
-            <span>💬 {project.commentCount}</span>
+            <span className="whitespace-nowrap">💬 {project.commentCount}</span>
           </div>
         </div>
       </div>
