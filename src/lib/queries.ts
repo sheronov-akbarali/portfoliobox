@@ -84,6 +84,23 @@ export async function getProjectBySlug(
   return (result.rows[0] as unknown as ProjectDetail) ?? null;
 }
 
+export type PlatformStats = {
+  projectCount: number;
+  developerCount: number;
+  avgRating: number;
+};
+
+export async function getStats(): Promise<PlatformStats> {
+  const db = getDb();
+  const result = await db.execute(sql`
+    select
+      (select count(*)::int from projects) as "projectCount",
+      (select count(*)::int from users) as "developerCount",
+      (select coalesce(avg(score), 0)::float from ratings) as "avgRating"
+  `);
+  return result.rows[0] as unknown as PlatformStats;
+}
+
 export type CommentItem = {
   id: string;
   body: string;

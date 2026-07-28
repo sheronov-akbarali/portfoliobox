@@ -6,7 +6,9 @@ import { getDb } from "@/db";
 import { ratings } from "@/db/schema";
 import { getProjectBySlug, listComments } from "@/lib/queries";
 import { getCurrentDbUser } from "@/lib/user";
+import { getT } from "@/lib/i18n/server";
 import StarRating from "@/components/StarRating";
+import LiquidRatingMeter from "@/components/LiquidRatingMeter";
 import CommentSection from "./CommentSection";
 
 export default async function ProjectPage({
@@ -18,9 +20,10 @@ export default async function ProjectPage({
   const project = await getProjectBySlug(slug);
   if (!project) notFound();
 
-  const [comments, currentUser] = await Promise.all([
+  const [comments, currentUser, { locale, t }] = await Promise.all([
     listComments(project.id),
     getCurrentDbUser(),
+    getT(),
   ]);
 
   let myScore = 0;
@@ -36,9 +39,9 @@ export default async function ProjectPage({
   }
 
   return (
-    <div className="max-w-3xl mx-auto flex flex-col gap-8">
+    <div className="mx-auto flex max-w-3xl flex-col gap-8">
       <div>
-        <div className="relative h-56 w-full rounded-2xl overflow-hidden bg-slate-100 mb-6">
+        <div className="glass-panel relative mb-6 h-56 w-full overflow-hidden rounded-3xl sm:h-72">
           {project.coverImageUrl ? (
             <Image
               src={project.coverImageUrl}
@@ -48,28 +51,31 @@ export default async function ProjectPage({
               sizes="768px"
             />
           ) : (
-            <div className="flex h-full items-center justify-center text-slate-400">
-              Rasm yoʻq
+            <div className="flex h-full items-center justify-center text-[var(--text-muted)]">
+              {t.card.noImage}
             </div>
           )}
         </div>
 
-        <h1 className="text-3xl font-bold text-slate-900">{project.title}</h1>
-        <div className="mt-2 flex items-center gap-2 text-sm text-slate-500">
+        <h1 className="font-display text-3xl font-bold text-[var(--text)] sm:text-4xl">
+          {project.title}
+        </h1>
+        <div className="mt-2 flex items-center gap-2 text-sm text-[var(--text-muted)]">
           <span>
-            Muallif:{" "}
-            <span className="font-medium text-slate-700">
+            {t.project.author}:{" "}
+            <span className="font-medium text-[var(--text)]">
               {project.authorName}
             </span>
           </span>
         </div>
 
         {project.techStack.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
+          <div className="mt-4 flex flex-wrap gap-1.5">
             {project.techStack.map((tech) => (
               <span
                 key={tech}
-                className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700"
+                className="rounded-full px-2.5 py-1 font-mono text-xs font-medium text-[var(--accent-solid)]"
+                style={{ background: "var(--glass-hover)" }}
               >
                 {tech}
               </span>
@@ -77,7 +83,7 @@ export default async function ProjectPage({
           </div>
         )}
 
-        <p className="mt-5 whitespace-pre-wrap text-slate-700 leading-relaxed">
+        <p className="mt-5 whitespace-pre-wrap leading-relaxed text-[var(--text)]">
           {project.description}
         </p>
 
@@ -86,42 +92,46 @@ export default async function ProjectPage({
             <Link
               href={project.repoUrl}
               target="_blank"
-              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+              className="glass-pill inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-[var(--text)] transition hover:scale-105 active:scale-95"
             >
-              GitHub
+              {t.project.viewRepo}
             </Link>
           )}
           {project.liveUrl && (
             <Link
               href={project.liveUrl}
               target="_blank"
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition"
+              className="accent-gradient inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-white shadow-[0_4px_14px_rgba(109,94,247,0.35)] transition hover:brightness-110 active:scale-95"
             >
-              Demo koʻrish
+              {t.project.viewDemo}
             </Link>
           )}
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-slate-500">Oʻrtacha baho</p>
-            <p className="text-2xl font-bold text-slate-900">
-              {project.avgRating.toFixed(1)}{" "}
-              <span className="text-sm font-normal text-slate-500">
-                ({project.ratingCount} ta baho)
+      <div className="glass-panel rounded-3xl p-5 sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex-1">
+            <p className="text-sm text-[var(--text-muted)]">{t.project.avgRating}</p>
+            <div className="mt-1 flex items-center gap-3">
+              <span className="font-display text-2xl font-bold text-[var(--text)]">
+                {project.avgRating.toFixed(1)}
               </span>
+              <LiquidRatingMeter score={project.avgRating} />
+            </div>
+            <p className="mt-1 text-xs text-[var(--text-muted)]">
+              {t.project.ratingsCount(project.ratingCount)}
             </p>
           </div>
-          <div className="flex flex-col items-end gap-1">
-            <span className="text-xs text-slate-500">
-              {currentUser ? "Sizning bahoyingiz" : "Baholash uchun kiring"}
+          <div className="flex flex-col items-start gap-1 sm:items-end">
+            <span className="text-xs text-[var(--text-muted)]">
+              {currentUser ? t.project.yourRating : t.project.signInToRate}
             </span>
             <StarRating
               projectId={project.id}
               initialScore={myScore}
               canRate={Boolean(currentUser)}
+              locale={locale}
             />
           </div>
         </div>
@@ -133,6 +143,7 @@ export default async function ProjectPage({
         comments={comments}
         currentUserId={currentUser?.id ?? null}
         isSignedIn={Boolean(currentUser)}
+        locale={locale}
       />
     </div>
   );

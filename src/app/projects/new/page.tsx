@@ -1,12 +1,15 @@
+import { getT } from "@/lib/i18n/server";
 import NewProjectForm from "./NewProjectForm";
 
-export default function NewProjectPage() {
+export default async function NewProjectPage() {
+  const { locale, t } = await getT();
+
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">
-        Yangi loyiha joylash
+    <div className="mx-auto max-w-2xl">
+      <h1 className="mb-6 font-display text-2xl font-bold text-[var(--text)]">
+        {t.form.heading}
       </h1>
-      <NewProjectForm />
+      <NewProjectForm locale={locale} />
     </div>
   );
 }

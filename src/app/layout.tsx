@@ -1,17 +1,25 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
+import { Inter, JetBrains_Mono, Unbounded } from "next/font/google";
+import ThemeProvider from "@/components/ThemeProvider";
+import ClerkThemeProvider from "@/components/ClerkThemeProvider";
 import Navbar from "@/components/Navbar";
+import { getT } from "@/lib/i18n/server";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const unbounded = Unbounded({
+  variable: "--font-unbounded",
+  subsets: ["latin", "cyrillic"],
+  weight: ["500", "600", "700", "800"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin", "cyrillic"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin", "cyrillic"],
 });
 
 export const metadata: Metadata = {
@@ -20,26 +28,34 @@ export const metadata: Metadata = {
     "Dasturchilar oʻz loyihalarini joylaydi, boshqalar koʻrib chiqadi, baholaydi va fikr bildiradi.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { locale, t } = await getT();
+
   return (
     <html
-      lang="uz"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang={locale}
+      suppressHydrationWarning
+      className={`${unbounded.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-slate-50 text-slate-900">
-        <ClerkProvider>
-          <Navbar />
-          <main className="flex-1 w-full max-w-5xl mx-auto px-4 py-8">
-            {children}
-          </main>
-          <footer className="border-t border-slate-200 py-6 text-center text-sm text-slate-500">
-            PortfolioBox — dasturchilar uchun loyihalar platformasi
-          </footer>
-        </ClerkProvider>
+      <body className="min-h-full flex flex-col font-sans">
+        <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
+          <ClerkThemeProvider locale={locale}>
+            <div className="bg-orbs" aria-hidden>
+              <span />
+            </div>
+            <Navbar locale={locale} t={t} />
+            <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-16">
+              {children}
+            </main>
+            <footer className="w-full py-8 text-center text-sm text-[var(--text-muted)]">
+              {t.footer.tagline}
+            </footer>
+          </ClerkThemeProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,34 +1,42 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { ProjectListItem } from "@/lib/queries";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
+import LiquidRatingMeter from "./LiquidRatingMeter";
 
-export default function ProjectCard({ project }: { project: ProjectListItem }) {
+export default function ProjectCard({
+  project,
+  t,
+}: {
+  project: ProjectListItem;
+  t: Dictionary;
+}) {
   return (
     <Link
       href={`/projects/${project.slug}`}
-      className="group flex flex-col rounded-2xl border border-slate-200 bg-white overflow-hidden hover:shadow-lg hover:border-indigo-200 transition"
+      className="glass-panel group flex flex-col overflow-hidden rounded-3xl transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(109,94,247,0.25)]"
     >
-      <div className="relative h-40 w-full bg-slate-100">
+      <div className="relative h-40 w-full overflow-hidden bg-[var(--glass-hover)]">
         {project.coverImageUrl ? (
           <Image
             src={project.coverImageUrl}
             alt={project.title}
             fill
-            className="object-cover"
+            className="object-cover transition duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, 33vw"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-slate-400 text-sm">
-            Rasm yoʻq
+          <div className="flex h-full items-center justify-center text-sm text-[var(--text-muted)]">
+            {t.card.noImage}
           </div>
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <h3 className="font-semibold text-slate-900 group-hover:text-indigo-600 transition line-clamp-1">
+      <div className="flex flex-1 flex-col gap-2 p-5">
+        <h3 className="font-display font-semibold text-[var(--text)] group-hover:text-[var(--accent-solid)] transition line-clamp-1">
           {project.title}
         </h3>
-        <p className="text-sm text-slate-600 line-clamp-2">
+        <p className="text-sm text-[var(--text-muted)] line-clamp-2">
           {project.description}
         </p>
 
@@ -37,7 +45,8 @@ export default function ProjectCard({ project }: { project: ProjectListItem }) {
             {project.techStack.slice(0, 4).map((tech) => (
               <span
                 key={tech}
-                className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700"
+                className="rounded-full px-2 py-0.5 font-mono text-[11px] font-medium text-[var(--accent-solid)]"
+                style={{ background: "var(--glass-hover)" }}
               >
                 {tech}
               </span>
@@ -45,14 +54,16 @@ export default function ProjectCard({ project }: { project: ProjectListItem }) {
           </div>
         )}
 
-        <div className="mt-auto flex items-center justify-between gap-2 pt-3 text-sm text-slate-500">
+        <div className="mt-auto flex items-center justify-between gap-2 pt-3 text-sm text-[var(--text-muted)]">
           <span className="min-w-0 truncate">{project.authorName}</span>
-          <div className="flex shrink-0 items-center gap-3">
-            <span className="flex items-center gap-1 whitespace-nowrap">
-              ⭐ {project.avgRating.toFixed(1)}
-              <span className="text-slate-400">({project.ratingCount})</span>
+          <div className="flex shrink-0 items-center gap-2.5">
+            <LiquidRatingMeter score={project.avgRating} size="sm" />
+            <span className="whitespace-nowrap font-mono text-xs">
+              {project.avgRating.toFixed(1)}
             </span>
-            <span className="whitespace-nowrap">💬 {project.commentCount}</span>
+            <span className="whitespace-nowrap font-mono text-xs">
+              💬 {project.commentCount}
+            </span>
           </div>
         </div>
       </div>
